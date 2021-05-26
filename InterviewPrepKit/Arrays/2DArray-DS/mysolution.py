@@ -1,11 +1,18 @@
-[link](https://www.hackerrank.com/challenges/count-triplets-1/problem?h_l=interview&playlist_slugs%5B%5D=interview-preparation-kit&playlist_slugs%5B%5D=dictionaries-hashmaps)
+#!/bin/python3
 
+import math
+import os
+import random
+import re
+import sys
 
-## First Try:
+#
+# Complete the 'hourglassSum' function below.
+#
+# The function is expected to return an INTEGER.
+# The function accepts 2D_INTEGER_ARRAY arr as parameter.
+#
 
-I had to reconstruct my prior (successful) effort.  So, unfortunately, I do not have the narrative of my progress.  But here is the final successful implementation. (see below)
-
-```
 HOURGLASS_N_ROWS = HOURGLASS_N_COLS = 3
 
 def hourglassSum(arr):
@@ -51,9 +58,3 @@ def hourglassSum(arr):
     print(f"hourglass {i_max_sum+1} with max sum of {max_sum} is:\n{s_hourglass[i_max_sum]}")
     
     return max_sum
-```
-
-
-## POST-MORTEM:
-
-Pay close attention to examples and make sure they pass!
