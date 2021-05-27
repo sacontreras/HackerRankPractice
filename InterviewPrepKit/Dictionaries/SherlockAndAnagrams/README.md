@@ -5,7 +5,7 @@
 
 The logic goes like this. Base it on all substrings. First find them.  Then for each substring, sort it.  This forms the anagram "basis".  The dictionary is keyed by the anagram basis.  The "values" associated with an anagram basis will be the lists of indices of chars in the original string.  Thus, we can later reconstruct all anagrams associated with this basis.  The final answer will be the count of all unique anagram bases.
 
-But, after submitting, we seem some test cases failing, in particular Test Case 01.  Expected 10, returned 3.
+But, after submitting, we see some test cases failing, in particular Test Case 01.  Expected 10, returned 3.
 
 My debug output:
 ```
