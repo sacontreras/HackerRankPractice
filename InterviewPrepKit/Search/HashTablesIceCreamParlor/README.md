@@ -3,11 +3,11 @@
 
 ## First Try:
 
-This puzzle if fairly straightforward.  Essentially, it can be distilled down to: given target sum $k$ and a list of integers $a_i: 1 \le i \le n, a_i > 0$, find $i \ne j$ such that $a_i + a_j = k$.
+This puzzle if fairly straightforward.  Essentially, it can be distilled down to: given target sum \(k\) and a list of integers \(a_i: 1 \le i \le n, a_i > 0\), find \(i \ne j\) such that \(a_i + a_j = k\).
 
-We construct a single dictionary (hash table) keyed by each $a_i$, with associated value consisting of the list (array) of indices $1 \le i \le n$ incident with each occurrence of $a_i$.
+We construct a single dictionary (hash table) keyed by each \(a_i\), with associated value consisting of the list (array) of indices \(1 \le i \le n\) incident with each occurrence of \(a_i\).
 
-We then iterate the keys, each $a_i$, and check for existence of key $a_j = k - a_i$.  If it exists, we simply return $i, j$.
+We then iterate the keys, each \(a_i\), and check for existence of key \(a_j = k - a_i\).  If it exists, we simply return \(i, j\).
 
 This algorithm passed all free test-cases and, upon submission, all locked test-cases.
 
