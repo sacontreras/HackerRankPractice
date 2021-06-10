@@ -118,8 +118,3 @@ result: 1 3
 ## POST-MORTEM:
 
 There were no real "gotchas" with this puzzle.  Successfully solving on the first try simply required reading the specification closely and then recognizing it could be solved easiest with a hash table.
-
-
-<script type="text/javascript" async
-
-src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
