@@ -207,7 +207,7 @@ def append_list(kargs):
     kargs['list'] = lst
 
 
-def traverse_inorder(p, d=0, fn_visit_handler=swap_children, fn_visit_handler__kargs=None, debug=False):
+def traverse_inorder(p, d=0, fn_visit_handler=append_list, fn_visit_handler__kargs=None, debug=False):
     if p is None:
         return
 
