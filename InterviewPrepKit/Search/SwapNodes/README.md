@@ -704,4 +704,4 @@ TEST CASE 02.2 RESULTS (from query==3):
 
 ## POST-MORTEM:
 
-There were no real "gotchas" with this puzzle.  Successfully solving on the first try simply required reading the specification closely and then recognizing it could be solved easiest with a hash table.
+See commentary above.
