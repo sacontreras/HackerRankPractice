@@ -18,7 +18,7 @@ But my initial mistakes noted above initially resulted in the free test-cases fa
 Upon addressing those mistakes, all free test-cases passed and upon submission, all remaining locked test-cases passed.
 
 I should also note that it was important to adjust the recursion limit via
-```
+```python
 import sys
 sys.setrecursionlimit(2000)
 ```
@@ -26,7 +26,7 @@ as well.
 
 (see below for my full implementation of this algorithm)
 
-```
+```python
 import sys
 sys.setrecursionlimit(2000)
 
