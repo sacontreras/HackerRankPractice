@@ -5,7 +5,7 @@
 
 This is a very straightforward problem.  But I got the condition check wrong the first time.  (see below)
 
-```
+```python
 def checkMagazine(magazine, note):
     debug = False
 
@@ -44,7 +44,8 @@ def checkMagazine(magazine, note):
 Fixed the condition check.  (see below)
 
 ALL TEST CASES PASSED!
-```
+
+```python
 def checkMagazine(magazine, note):
     debug = True
 

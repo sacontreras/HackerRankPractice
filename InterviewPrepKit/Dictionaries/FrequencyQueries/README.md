@@ -6,7 +6,7 @@ This puzzle is fairly easy since it is mostly an exercise in tedium and accounti
 
 (see below)
 
-```
+```python
 def freqQuery(queries):
     debug = True
 
@@ -226,7 +226,7 @@ In the first try, I failed to update `d_by_counts` on insert. (see below)
 
 But still failing on test cases 8,9, and 12.
 
-```
+```python
 def freqQuery(queries):
     debug = False
 
@@ -338,7 +338,7 @@ def freqQuery(queries):
 
 This iteration consisted merely of consolidation functionality into a common `update_count` function.  ALL TEST CASES NOW PASSING! (see below)
 
-```
+```python
 def freqQuery(queries):
     debug = False
 

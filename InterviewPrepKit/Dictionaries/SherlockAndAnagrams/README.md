@@ -20,7 +20,7 @@ expect: 10
 
 (implementation below)
 
-```
+```python
 def sherlockAndAnagrams(s):
     debug = True
 
@@ -62,7 +62,7 @@ def sherlockAndAnagrams(s):
 
 It turns out that I was counting incorrectly. The following changes resulted in all test cases passing.  (see below)
 
-```
+```python
 def sherlockAndAnagrams(s):
     debug = False
 

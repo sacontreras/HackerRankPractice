@@ -5,7 +5,7 @@
 
 This problem is straightforward.  The logic appears to be correct.  But the solution is sub-optimal (very, VERY slow) and results in timeout.  (see below)
 
-```
+```python
 def twoStrings(s1, s2):
     debug = False
 
@@ -47,7 +47,7 @@ def twoStrings(s1, s2):
 
 Used dicts for O(1) lookup.  Better than the above but still failing due to timeout on some (but fewer) test cases. (see below)
 
-```
+```python
 def twoStrings(s1, s2):
     debug = False
 
@@ -91,7 +91,7 @@ Dicts for O(1) lookup is definitely the correct approach.  But on closer observa
 
 ALL TEST CASES PASSED!
 
-```
+```python
 def twoStrings(s1, s2):
     d_s1_subs = {}
     d_s2_subs = {}

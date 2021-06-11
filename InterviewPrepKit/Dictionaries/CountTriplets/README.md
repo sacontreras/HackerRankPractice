@@ -9,7 +9,7 @@ HOWEVER, this has woeful O(n^3) complexity and does not match the spec entirely,
 
 (see below)
 
-```
+```python
 def countTriplets(arr, r):
     debug = True
 
@@ -238,7 +238,7 @@ First thing to note here is that I did not use the HUGE tell right from the get-
 
 Additionally, admittedly, I unlocked the "Editorial".  (see below)
 
-```
+```python
 def countTriplets(arr, r):
     debug = True
 
