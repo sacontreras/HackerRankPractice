@@ -9,7 +9,7 @@ This passed all free test-cases and upon submission, pass all test-cases except 
 
 (see below)
 
-```
+```python
 def luckBalance(k, contests, debug=False):
     if debug:
         print(f"k: {k}, {len(contests)} contests: {contests}\n")
@@ -99,7 +99,7 @@ This passed all free test-cases and upon submission, passed ALL test-cases inclu
 
 (see below)
 
-```
+```python
 def luckBalance(k, contests, debug=False):
     if debug:
         print(f"k: {k}, {len(contests)} contests: {contests}\n")

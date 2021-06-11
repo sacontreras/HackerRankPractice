@@ -9,7 +9,7 @@ This algorithm passed all free test-cases.  Unfortunately, it failed every one o
 
 (see below)
 
-```
+```python
 def maxMin(k, arr, debug=False):
     if debug:
         print(f"k: {k}, arr: {arr}")
@@ -73,7 +73,7 @@ The new (modified from above) algorithm passed all free test-cases as well as th
 
 (see below)
 
-```
+```python
 def maxMin(k, arr, debug=False):
     if debug:
         print(f"k: {k}, arr: {arr}")
@@ -156,7 +156,7 @@ I made a mistake on the upper-bound on the range of starting indices (correspond
 
 (see below)
 
-```
+```python
 def maxMin(k, arr, debug=False):
     if debug:
         print(f"k: {k}, arr: {arr}")

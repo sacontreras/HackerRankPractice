@@ -9,7 +9,7 @@ All free test-cases passed and so did every other test-case upon submission.
 
 (see below)
 
-```
+```python
 def minimumAbsoluteDifference(arr, debug=False):
     if debug:
         print(f"arr: {arr}")

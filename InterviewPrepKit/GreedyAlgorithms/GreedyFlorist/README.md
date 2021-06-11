@@ -9,7 +9,7 @@ The algorithm below passed all of the free test-cases and upon submissions passe
 
 (see below)
 
-```
+```python
 def getMinimumCost(k, c, debug=False):
     if debug:
         print(f"k: {k}, c: {c}")

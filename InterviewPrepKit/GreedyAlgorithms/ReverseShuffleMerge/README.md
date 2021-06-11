@@ -7,7 +7,7 @@ It required a fair amount of time for me to understand the exact nature of this 
 
 (see below)
 
-```
+```python
 def reverseShuffleMerge(s, debug=False):
     if debug:
         s_reversed = s[::-1]
@@ -213,4 +213,4 @@ Upon submission, all remaining locked test-cases passed.
 
 ## POST-MORTEM:
 
-This was a tough puzzle primarily because the problem statement itself requires a lot of though and study upfront in order to even get started.  If one does not properly understand the puzzle how can one solve the problem?  I didn't actually fully understand the problem on my own, initially.  It required consulting with others working on the same problem in order to do so.
+This was a tough puzzle primarily because the problem statement itself requires a lot of thought and study upfront in order to even get started.  If one does not properly understand the puzzle how can one solve the problem?  I didn't actually fully understand the problem on my own, initially.  It required consulting with others working on the same problem in order to do so.
