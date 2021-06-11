@@ -5,7 +5,7 @@
 
 I had to reconstruct my prior (successful) effort.  So, unfortunately, I do not have the narrative of my progress.  But here is the final successful implementation. (see below)
 
-```
+```python
 HOURGLASS_N_ROWS = HOURGLASS_N_COLS = 3
 
 def hourglassSum(arr):

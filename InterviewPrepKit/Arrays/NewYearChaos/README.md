@@ -5,7 +5,7 @@
 
 Initially, I correctly solved this with quadratic complexity, O(n^2) but this resulted in timeout error on Hackerrank.  (see below)
 
-```
+```python
 def minimumBribes(q):
     n_total_bribes = 0
     
@@ -37,7 +37,7 @@ Then I did some research into a solution based on counting inversions - not quit
 
 Then, I did more research and found a linear, O(n) complexity solution from https://www.tutorialspoint.com/program-to-count-number-of-swaps-required-to-change-one-list-to-another-in-python.  (see below)
 
-```
+```python
 def minimumBribes(q):
     # credit where credit is due:
     #   referenced article https://www.tutorialspoint.com/program-to-count-number-of-swaps-required-to-change-one-list-to-another-in-python

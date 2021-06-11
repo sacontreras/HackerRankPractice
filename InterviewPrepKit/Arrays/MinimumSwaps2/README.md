@@ -5,7 +5,7 @@
 
 In theory, this puzzle is fairly straightforward.  My initial attempt is logically correct.  However, it does not account for the complexity involved in using the List.index() method in Python.  Thus, it failed due to timeout in some of the larger test cases. (see below)
 
-```
+```python
 def minimumSwaps(arr):
     n_swaps = 0
     
@@ -30,7 +30,7 @@ def minimumSwaps(arr):
 
 So, an O(1) lookup is required.  Thus, a dictionary is used to do the lookups instead.  Simple.  (see below)
 
-```
+```python
 def minimumSwaps(arr):
     d_arr = {v:i for i,v in enumerate(arr)} # for O(1) lookup
 

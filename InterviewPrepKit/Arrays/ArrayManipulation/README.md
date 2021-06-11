@@ -7,7 +7,7 @@ The explanation of the puzzle is not exactly clear and REQUIRES inspecting the e
 
 In theory, again, this puzzle is fairly straightforward.  My initial attempt is brute force and is logically correct.  However, it is sub-optimal with O(n^2) complexity and thus fails half of the test cases due to timeout.  Downloading test-cases shows the logic is correct.  (see below)
 
-```
+```python
 def arrayManipulation(n, queries):
     arr = [0 for _ in range(n)]
     # print(f"initialized array of length {n}: {arr}")
@@ -32,7 +32,8 @@ def arrayManipulation(n, queries):
 I analyzed the patterns produced from several of the free test cases.  Upon inspection of the output from the brute force approach above, it looks as if the pattern shows that the only entries that contribute to the max calc involve only indices lb_1-1 and ub_1 (inclusive).  If we track the cumulative sum and update max_v based on that, in that case we substract the val at ub_1 (inclusive).  This will result in linear complexity.  (see below)
 
 ALL TEST CASES PASSED!
-```
+
+```python
 def arrayManipulation(n, queries):
     arr_debug = None
     arr = [0 for _ in range(n+1)]

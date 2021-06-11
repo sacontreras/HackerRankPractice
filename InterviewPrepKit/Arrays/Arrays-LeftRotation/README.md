@@ -5,7 +5,7 @@
 
 I had to reconstruct my prior (successful) effort.  So, unfortunately, I do not have the narrative of my progress.  But here is the final successful implementation. (see below)
 
-```
+```python
 def rotLeft(a, d):
     a_left_rotated = []
     l = len(a)
