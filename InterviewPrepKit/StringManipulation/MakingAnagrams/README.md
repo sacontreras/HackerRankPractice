@@ -7,7 +7,7 @@ This puzzle is very straightforward.  It requires character frequencies.  Thus, 
 
 (see below)
 
-```
+```python
 def makeAnagram(a, b, debug=False):
     if debug:
         print(f"a: {a}, b: {b}")

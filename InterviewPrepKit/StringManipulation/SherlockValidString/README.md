@@ -18,7 +18,7 @@ This algorithm passed all of the free test-cases.  Upon submission, it passed al
 
 (see below)
 
-```
+```python
 def isValid(s, debug=False):
     if debug:
         print(f"s: {s}")
@@ -98,7 +98,7 @@ The difference in this version is how we handle the edge-cases.  Specifically, w
 
 (see below)
 
-```
+```python
 def isValid(s, debug=False):
     if debug:
         print(f"s: {s}")

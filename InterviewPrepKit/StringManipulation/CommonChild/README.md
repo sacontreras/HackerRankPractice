@@ -9,7 +9,7 @@ All free test-cases passed.  Additionally, I unlocked test-cases 00, 01, and 10.
 
 (see below)
 
-```
+```python
 def lcs(s1, s2, debug=False):
     """
     Credit/reference:

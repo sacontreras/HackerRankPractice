@@ -23,7 +23,7 @@ I didn't even bother officially submitting this implementation for grading.  Ins
 
 (see below)
 
-```
+```python
 def substrCount(n, s, debug=False):
     if debug:
         print(f"n: {n}, s: {s}")
@@ -199,7 +199,7 @@ For this iteration, I focused on finding a linear implementation using the above
 
 (see below)
 
-```
+```python
 def vectorize_char_counts(n, s):
     char_count_tuples = []
     i = 0

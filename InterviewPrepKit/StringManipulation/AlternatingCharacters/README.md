@@ -7,7 +7,7 @@ This puzzle is fairly straightforward.  Dictionaries (Hash Tables) are your frie
 
 (see below)
 
-```
+```python
 def alternatingCharacters(s, debug=False):
     if debug:
         print(f"s: {s}")
