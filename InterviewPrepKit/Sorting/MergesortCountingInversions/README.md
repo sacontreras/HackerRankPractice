@@ -9,7 +9,7 @@ However, upon submission, it failed test-cases 1, 4 through 9, and 11 through 13
 
 (see below)
 
-```
+```python
 def sort(ary, lb, mid, ub, debug_depth=-1):
     # pivot on left partition first
     i_inspect = lb
@@ -303,7 +303,7 @@ The moral of the story here is that I had to use standard (new array) mergesort 
 
 (see below)
 
-```
+```python
 def merge(arr_left, arr_right):
     n_inversions = 0
 

@@ -7,7 +7,7 @@ This puzzle involves a clear understanding of the correct indexing scheme.  The 
 
 (see below)
 
-```
+```python
 def activityNotifications(expenditure, d):
     debug = True
 
@@ -112,7 +112,7 @@ This solved the timeout failures.  ALL test-cases passed!
 
 (see below)
 
-```
+```python
 from bisect import bisect_left, insort_left
 def activityNotifications(expenditure, d):
     debug = False

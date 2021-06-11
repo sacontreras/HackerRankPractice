@@ -4,7 +4,7 @@
 ## First Try:
 This is a straightforward puzzle.  Simplu carry out the sort using the BubbleSort algo.  Along the way, count n_swaps.  Simple. All free test-cases passed. (see below)
 
-```
+```python
 def countSwaps(a):
     debug = False
     

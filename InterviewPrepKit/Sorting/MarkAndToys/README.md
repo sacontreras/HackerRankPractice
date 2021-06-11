@@ -4,7 +4,7 @@
 ## First Try:
 This puzzle is straightforward.  Simply sort the array of prices.  Compute the cumulative sum of each price.  Continue advancing through the array of sorted prices doing this until the cumulative sum is >= k.  When this occurs we exit the loop.  With each iteration, each time this condition is not true, i.e. cumulative sum < k, we increment max_toys by 1.  All free test-cases pased based on this implementation. (see below)
 
-```
+```python
 def maximumToys(prices, k):
     debug = True
 

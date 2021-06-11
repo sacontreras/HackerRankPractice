@@ -4,7 +4,7 @@
 ## First Try:
 This puzzle is fairly straightforward.  It only requires understanding of how comparators work.  That is, given objects a and b, return -1 if a < b, 1 if a > b, and 0 if a == b based on comparison rules.  Comparison rules are provided in problem description.  All free test-cases passed.  (see below)
 
-```
+```python
 from functools import cmp_to_key
 class Player:
     def __init__(self, name, score):
