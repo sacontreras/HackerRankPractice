@@ -14,7 +14,7 @@ The algorithm below passed all free test-cases and upon submission passed all re
 
 (see below for my full implementation of this algorithm)
 
-```
+```python
 def pairs(k, arr, debug=False):
     n = len(arr)
 
