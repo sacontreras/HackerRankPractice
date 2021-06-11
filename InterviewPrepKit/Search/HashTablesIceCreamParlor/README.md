@@ -13,7 +13,7 @@ This algorithm passed all free test-cases and, upon submission, all locked test-
 
 (see below)
 
-```
+```python
 def whatFlavors(cost, money, debug=False):
     if debug:
         print(f"cost: {cost}, money: {money}")
