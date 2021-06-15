@@ -250,4 +250,4 @@ TEST CASE 12.1:
 
 ## POST-MORTEM:
 
-See commentary above.
+The high-level moral of the story is: 1.) understand theory, and 2.) make sure all of your free test-cases pass. (Obvious, but worth emphasizing here.)
