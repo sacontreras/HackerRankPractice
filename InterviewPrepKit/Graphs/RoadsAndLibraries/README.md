@@ -207,7 +207,8 @@ c_road < c_lib --> must build graph and traverse DFS
  [1 0 0 0 0]
  [1 0 0 0 0]
  [1 0 0 0 0]
- [0 0 0 0 1]]
+ [0 0 0 0 0]]
+                --> disconnected nodes: {5}
 
         traversing graph DFS (building city-paths for each 'county')...
                 visit: 1, to_nodes: [2, 3, 4]

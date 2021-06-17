@@ -20,7 +20,7 @@ import numpy as np
 
 def build_graph(n, cities, debug=False):
     d_cities_graph = {}
-    on_diag = set(range(1,n+1))
+    not_connected = set(range(1,n+1))
     if debug:
         print(f"\tbuilding graph...")
         adj_mat = [[0 for _ in range(n)] for _ in range(n)]
@@ -31,25 +31,26 @@ def build_graph(n, cities, debug=False):
         node_i = d_cities_graph.get(i,{'to_nodes':[],'visited':False})
         node_i['to_nodes'].append(j)
         d_cities_graph[i] = node_i
-        on_diag -= set([i])
+        not_connected -= set([i])
 
         node_j = d_cities_graph.get(j,{'to_nodes':[],'visited':False})
         node_j['to_nodes'].append(i)
         d_cities_graph[j] = node_j
-        on_diag -= set([j])
+        not_connected -= set([j])
 
         if debug:
             adj_mat[i-1][j-1] = adj_mat[j-1][i-1] = 1
 
-    for i in list(on_diag):
+    for i in list(not_connected):
         node_i = d_cities_graph.get(i,{'to_nodes':[],'visited':False})
         d_cities_graph[i] = node_i
-        if debug:
-            adj_mat[i-1][i-1] = 1
 
     if debug:
         print(f"\t\t--> graph:\n{d_cities_graph}\n")
-        print(f"\t\t--> adjacency matrix:\n{np.matrix(adj_mat)}\n")
+        print(f"\t\t--> adjacency matrix:\n{np.matrix(adj_mat)}")
+        if len(not_connected)>0:
+            print(f"\t\t--> disconnected nodes: {not_connected}")
+        print()
 
     return d_cities_graph
 
