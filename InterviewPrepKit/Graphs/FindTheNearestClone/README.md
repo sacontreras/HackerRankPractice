@@ -3,9 +3,9 @@
 
 ## First Try:
 
-Like all graph-theory puzzle, this puzzle is not super tricky.  But it definitely requires a full understanding of graphs and their corresponding traversals, BFS in particular.
+Like all graph-theory puzzles, this puzzle is not super tricky.  But it definitely requires a full understanding of graphs and their corresponding traversals, BFS in particular.
 
-Of course, a full understanding of the requirements was essential (as always).  This naturally leads on to understanding that BFS (instead of DFS) is required in this case.
+Of course, a full understanding of the requirements was essential (as always).  This naturally leads one to understanding that BFS (instead of DFS) is required in this case.
 
 The remainder of the puzzle required designing an effective means to track auxiliary information.  Specifically, both start and end nodes must be tracked and, more importantly, the corresponding depths.
 
@@ -19,7 +19,7 @@ With this approach, all free test-cases passed.  Upon submission, all remaining 
 ```python
 def build_graph(n, graph_from, graph_to, colors, target_color, debug=False):
     d_graph = {}
-    on_diag = set(range(1,n+1))
+    disconnected = set(range(1,n+1))
     if debug:
         print(f"\tbuilding graph...")
         adj_mat = [[0 for _ in range(n)] for _ in range(n)]
@@ -30,21 +30,19 @@ def build_graph(n, graph_from, graph_to, colors, target_color, debug=False):
         from_node = d_graph.get(i_from_node,{'to_nodes':[],'color':colors[i_from_node-1],'visited':False})
         from_node['to_nodes'].append(i_to_node)
         d_graph[i_from_node] = from_node
-        on_diag -= set([i_from_node])
+        disconnected -= set([i_from_node])
 
         to_node = d_graph.get(i_to_node,{'to_nodes':[],'color':colors[i_to_node-1],'visited':False})
         to_node['to_nodes'].append(i_from_node)
         d_graph[i_to_node] = to_node
-        on_diag -= set([i_to_node])
+        disconnected -= set([i_to_node])
 
         if debug:
             adj_mat[i_from_node-1][i_to_node-1] = adj_mat[i_to_node-1][i_from_node-1] = 1
 
-    for i in list(on_diag):
+    for i in list(disconnected):
         node_i = d_graph.get(i,{'to_nodes':[],'color':colors[i-1],'visited':False})
         d_graph[i] = node_i
-        if debug:
-            adj_mat[i-1][i-1] = 1
 
     d_graph_color_match = {i_node: d_node for i_node, d_node in filter(lambda t_graph_item: t_graph_item[1]['color']==target_color, d_graph.items())}
 
