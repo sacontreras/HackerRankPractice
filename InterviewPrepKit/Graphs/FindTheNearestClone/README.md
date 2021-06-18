@@ -44,14 +44,14 @@ def build_graph(n, graph_from, graph_to, colors, target_color, debug=False):
         node_i = d_graph.get(i,{'to_nodes':[],'color':colors[i-1],'visited':False})
         d_graph[i] = node_i
 
-    d_graph_color_match = {i_node: d_node for i_node, d_node in filter(lambda t_graph_item: t_graph_item[1]['color']==target_color, d_graph.items())}
+    lst_nodes_color_match = [i_node for i_node, _ in filter(lambda t_graph_item: t_graph_item[1]['color']==target_color, d_graph.items())]
 
     if debug:
         print(f"\t\t--> graph:\n{d_graph}\n")
         print(f"\t\t--> adjacency matrix:\n{np.matrix(adj_mat)}\n")
-        print(f"\t\t--> filtered graph:\n{d_graph_color_match}\n")
+        print(f"\t\t--> nodes matching color {target_color}: {lst_nodes_color_match}\n")
 
-    return d_graph, d_graph_color_match
+    return d_graph, lst_nodes_color_match
 
 def visit_handler__print_node(**kwargs):
     d_graph = kwargs['d_graph']
@@ -63,8 +63,6 @@ def visit_handler__print_node(**kwargs):
     is_color_match = c==target_color
     d_tracking = kwargs['d_tracking']
     debug = kwargs['debug']
-    path = kwargs['path']
-    path.append(i_node)
 
     if debug:
         s_tabs = '\t'*depth
@@ -94,6 +92,8 @@ def visit_handler__print_node(**kwargs):
 
 
 def traverse_graph_BFS(d_graph, i_node_start, fn_visit_handler, fn_visit_handler__kwargs, debug=False):
+    if fn_visit_handler__kwargs is None:
+        fn_visit_handler__kwargs = {'full_bfs_path':[]}
     nodes_pending_queue = []
     depth = 0
     nodes_pending_queue.insert(0, (i_node_start,depth))
@@ -101,8 +101,6 @@ def traverse_graph_BFS(d_graph, i_node_start, fn_visit_handler, fn_visit_handler
         i_node, depth = nodes_pending_queue.pop()
         d_node = d_graph[i_node]
 
-        if fn_visit_handler__kwargs is None:
-            fn_visit_handler__kwargs = {}
         kwargs = {'d_graph':d_graph,'i_node':i_node,'depth':depth,'debug':debug}
         fn_visit_handler__kwargs.update(kwargs)
         fn_visit_handler(**fn_visit_handler__kwargs)
@@ -117,20 +115,18 @@ def findShortest(graph_nodes, graph_from, graph_to, ids, val, debug=False):
     if debug:
         print(f"graph_nodes: {graph_nodes}\ngraph_from: {graph_from}\ngraph_to: {graph_to}\nids: {ids}\nval: {val}\n")
 
-    d_graph, d_graph_color_match = build_graph(graph_nodes, graph_from, graph_to, ids, val, debug=debug)
+    d_graph, lst_nodes_color_match = build_graph(graph_nodes, graph_from, graph_to, ids, val, debug=debug)
 
-    if len(d_graph_color_match) < 2:
+    if len(lst_nodes_color_match) < 2:
         if debug:
-            print(f"short-circuit since len(d_graph_color_match)<2 --> shortest BFS path for target color {val} DOES NOT EXIST")
+            print(f"short-circuit since len(lst_nodes_color_match)<2 --> start/end path for target color {val} DOES NOT EXIST")
         return -1
 
     if debug:
         print(f"len(d_graph_color_match)>=2 --> traversing graph BFS to find shortest path for target color {val} ...")
-    start_node = list(d_graph_color_match.items())[0][0]
-    path = []
+    start_node = lst_nodes_color_match[0]
     d_tracking = {'start_node':None,'end_node':None}
     kwargs = {
-        'path':path,
         'target_color':val,
         'd_tracking':d_tracking
     }
@@ -138,15 +134,14 @@ def findShortest(graph_nodes, graph_from, graph_to, ids, val, debug=False):
 
     start_node = d_tracking['start_node']
     end_node = d_tracking['end_node']
-    shortest_path = path[start_node[1]:end_node[1]+1] if (start_node is not None) and (end_node is not None) else []
+    l_shortest_path = end_node[1]-start_node[1] if (start_node is not None) and (end_node is not None) else -1
     if debug:
-        print(f"full BFS path is: {path}")
-        if len(shortest_path)>0:
-            print(f"shortest BFS path for target color {val} is: {shortest_path}")
+        if l_shortest_path != -1:
+            print(f"shortest BFS path for target color {val} starts with node {start_node[0]} (at depth {start_node[1]}) and ends with node {end_node[0]} (at depth {end_node[1]})")
         else:
-            print(f"but shortest BFS path for target color {val} DOES NOT EXIST since not both matching start/end nodes were found")
+            print(f"but start/end path for target color {val} DOES NOT EXIST")
 
-    return len(shortest_path)-1
+    return l_shortest_path
 ```
 
 <p><br>
@@ -170,8 +165,7 @@ val: 1
  [1 0 0 0]
  [0 1 0 0]]
 
-                --> filtered graph:
-{1: {'to_nodes': [2, 3], 'color': 1, 'visited': False}, 3: {'to_nodes': [1], 'color': 1, 'visited': False}, 4: {'to_nodes': [2], 'color': 1, 'visited': False}}
+                --> nodes matching color 1: [1, 3, 4]
 
 len(d_graph_color_match)>=2 --> traversing graph BFS to find shortest path for target color 1 ...
 depth: 0, visit: 1 --> d_graph[1]['color'] == target_color --> 1 == 1 --> True
@@ -181,8 +175,7 @@ depth: 0, visit: 1 --> d_graph[1]['color'] == target_color --> 1 == 1 --> True
                 --> end_node is None --> set end_node=(3, 1)
                 depth: 2, visit: 4 --> d_graph[4]['color'] == target_color --> 1 == 1 --> True
                         --> end_node is (3, 1) but current depth 2 is NOT less --> DO NOT REPLACE end_node
-full BFS path is: [1, 2, 3, 4]
-shortest BFS path for target color 1 is: [1, 2]
+shortest BFS path for target color 1 starts with node 1 (at depth 0) and ends with node 3 (at depth 1)
 TEST CASE 00.1:
         result: 1
         expect: 1
@@ -210,10 +203,9 @@ val: 2
  [1 0 0 0]
  [0 1 0 0]]
 
-                --> filtered graph:
-{2: {'to_nodes': [1, 4], 'color': 2, 'visited': False}}
+                --> nodes matching color 2: [2]
 
-short-circuit since len(d_graph_color_match)<2 --> shortest BFS path for target color 2 DOES NOT EXIST
+short-circuit since len(lst_nodes_color_match)<2 --> start/end path for target color 2 DOES NOT EXIST
 TEST CASE 01.1:
         result: -1
         expect: -1
@@ -242,8 +234,7 @@ val: 2
  [0 1 0 0 0]
  [0 0 1 0 0]]
 
-                --> filtered graph:
-{2: {'to_nodes': [1, 4], 'color': 2, 'visited': False}, 5: {'to_nodes': [3], 'color': 2, 'visited': False}}
+                --> nodes matching color 2: [2, 5]
 
 len(d_graph_color_match)>=2 --> traversing graph BFS to find shortest path for target color 2 ...
 depth: 0, visit: 2 --> d_graph[2]['color'] == target_color --> 2 == 2 --> True
@@ -253,8 +244,7 @@ depth: 0, visit: 2 --> d_graph[2]['color'] == target_color --> 2 == 2 --> True
                 depth: 2, visit: 3 --> d_graph[3]['color'] == target_color --> 3 == 2 --> False
                         depth: 3, visit: 5 --> d_graph[5]['color'] == target_color --> 2 == 2 --> True
                                 --> end_node is None --> set end_node=(5, 3)
-full BFS path is: [2, 1, 4, 3, 5]
-shortest BFS path for target color 2 is: [2, 1, 4, 3]
+shortest BFS path for target color 2 starts with node 2 (at depth 0) and ends with node 5 (at depth 3)
 TEST CASE 12.1:
         result: 3
         expect: 3
