@@ -95,7 +95,7 @@ def visit_handler__print_node(**kwargs):
 
 def traverse_graph_BFS(d_graph, i_node_start, fn_visit_handler, fn_visit_handler__kwargs, debug=False):
     if fn_visit_handler__kwargs is None:
-        fn_visit_handler__kwargs = {'full_bfs_path':[]}
+        fn_visit_handler__kwargs = {}
     nodes_pending_queue = []
     depth = 0
     nodes_pending_queue.insert(0, (i_node_start,depth))
