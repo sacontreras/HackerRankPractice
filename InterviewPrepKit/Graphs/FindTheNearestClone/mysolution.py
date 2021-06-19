@@ -19,105 +19,115 @@ import numpy as np
 #
 #
 
+from collections import deque
+class Graph():
+    def __init__(self, n, is_directed=False, node_labels=None, debug=False):
+        self.is_directed = is_directed
+        if node_labels is None:
+            node_labels = list(range(1,n+1))
+        self.node_labels = node_labels
+        self._d_graph = {lbl_node:{'id':lbl_node,'neighbors':set()} for lbl_node in node_labels}
+        self.visited = set()
+        self._debug = debug
+        if debug:
+            self._adj_mat = [[0 for _ in range(n)] for _ in range(n)]
+
+    def connect(self, from_node, to_node):
+        self._d_graph[from_node]['neighbors'].add(to_node)
+        if not self.is_directed:
+            self._d_graph[to_node]['neighbors'].add(from_node)
+        if self._debug:
+            self._adj_mat[self.node_labels.index(from_node)][self.node_labels.index(to_node)] = 1
+            if not self.is_directed:
+                self._adj_mat[self.node_labels.index(to_node)][self.node_labels.index(from_node)] = 1
+
+    def reset_visited(self):
+        self.visited = set()
+
+    def traverse_BFS(self, start_from_node, fn_visit_handler, fn_visit_handler__kwargs):
+        nodes_pending_queue = deque()
+        depth = 0
+        nodes_pending_queue.append((start_from_node,depth))
+
+        if fn_visit_handler__kwargs is None:
+            fn_visit_handler__kwargs = {}
+        fn_visit_handler__kwargs.update({'g':self})
+
+        while len(nodes_pending_queue) > 0:
+            current_node, depth = nodes_pending_queue.popleft() # O(1)
+            d_node = self._d_graph[current_node]
+
+            if current_node not in self.visited:
+                kwargs = {'current_node':current_node,'depth':depth}
+                fn_visit_handler__kwargs.update(kwargs)
+                fn_visit_handler(**fn_visit_handler__kwargs)
+                self.visited.add(current_node)
+
+                for neighbor_node in d_node['neighbors']:
+                    if neighbor_node not in self.visited:
+                        nodes_pending_queue.append((neighbor_node,depth+1))
+
+
 def build_graph(n, graph_from, graph_to, colors, target_color, debug=False):
-    d_graph = {}
-    disconnected = set(range(1,n+1))
+    g = Graph(n, debug=debug)
+    for i_node in range(1,n+1):
+        g._d_graph[i_node].update({'color':colors[i_node-1]})
+
     if debug:
         print(f"\tbuilding graph...")
-        adj_mat = [[0 for _ in range(n)] for _ in range(n)]
     for i in range(len(graph_from)):
-        i_from_node = graph_from[i]
-        i_to_node = graph_to[i]
-        
-        from_node = d_graph.get(i_from_node,{'to_nodes':[],'color':colors[i_from_node-1],'visited':False})
-        from_node['to_nodes'].append(i_to_node)
-        d_graph[i_from_node] = from_node
-        disconnected -= set([i_from_node])
-
-        to_node = d_graph.get(i_to_node,{'to_nodes':[],'color':colors[i_to_node-1],'visited':False})
-        to_node['to_nodes'].append(i_from_node)
-        d_graph[i_to_node] = to_node
-        disconnected -= set([i_to_node])
-
-        if debug:
-            adj_mat[i_from_node-1][i_to_node-1] = adj_mat[i_to_node-1][i_from_node-1] = 1
-
-    for i in list(disconnected):
-        node_i = d_graph.get(i,{'to_nodes':[],'color':colors[i-1],'visited':False})
-        d_graph[i] = node_i
-
-    lst_nodes_color_match = [i_node for i_node, _ in filter(lambda t_graph_item: t_graph_item[1]['color']==target_color, d_graph.items())]
-
+        g.connect(graph_from[i], graph_to[i])
+    lst_nodes_color_match = [i_node for i_node, _ in filter(lambda t_graph_item: t_graph_item[1]['color']==target_color, g._d_graph.items())]
     if debug:
-        print(f"\t\t--> graph:\n{d_graph}\n")
-        print(f"\t\t--> adjacency matrix:\n{np.matrix(adj_mat)}\n")
+        print(f"\t\t--> graph:\n{g._d_graph}\n")
+        print(f"\t\t--> adjacency matrix:\n{np.matrix(g._adj_mat)}\n")
         print(f"\t\t--> nodes matching color {target_color}: {lst_nodes_color_match}\n")
 
-    return d_graph, lst_nodes_color_match
+    return g, lst_nodes_color_match
 
 def visit_handler__print_node(**kwargs):
-    d_graph = kwargs['d_graph']
-    i_node = kwargs['i_node']
-    d_node = d_graph[i_node]
+    g = kwargs['g']
+    d_graph = g._d_graph
+    current_node = kwargs['current_node']
+    d_node = d_graph[current_node]
     depth = kwargs['depth']
     c = d_node['color']
     target_color = kwargs['target_color']
     is_color_match = c==target_color
     d_tracking = kwargs['d_tracking']
-    debug = kwargs['debug']
+    debug = g._debug
 
     if debug:
         s_tabs = '\t'*depth
-        print(f"{s_tabs}depth: {depth}, visit: {i_node} --> d_graph[{i_node}]['color'] == target_color --> {c} == {target_color} --> {is_color_match}")
+        print(f"{s_tabs}depth: {depth}, visit: {current_node} --> d_graph[{current_node}]['color'] == target_color --> {c} == {target_color} --> {is_color_match}")
 
     if is_color_match:
         if d_tracking['start_node'] is None:
-            d_tracking['start_node'] = (i_node, depth)
+            d_tracking['start_node'] = (current_node, depth)
             if debug:
                 print(f"{s_tabs}\t--> start_node is None --> set start_node={d_tracking['start_node']}")
 
         else:   # start_node already defined
             if d_tracking['end_node'] is None:
-                d_tracking['end_node'] = (i_node, depth)
+                d_tracking['end_node'] = (current_node, depth)
                 if debug:
                     print(f"{s_tabs}\t--> end_node is None --> set end_node={d_tracking['end_node']}")
             
             else: 
                 current_end_node = d_tracking['end_node']
                 if depth < current_end_node[1]: # end_node already defined but reassign if new depth < old depth
-                    d_tracking['end_node'] = (i_node, depth)
+                    d_tracking['end_node'] = (current_node, depth)
                     if debug:
                         print(f"{s_tabs}\t--> end_node is {current_end_node} but current depth {depth} is less --> REPLACE end_node={d_tracking['end_node']}")
                 else:
                     if debug:
                         print(f"{s_tabs}\t--> end_node is {current_end_node} but current depth {depth} is NOT less --> DO NOT REPLACE end_node")
 
-
-def traverse_graph_BFS(d_graph, i_node_start, fn_visit_handler, fn_visit_handler__kwargs, debug=False):
-    if fn_visit_handler__kwargs is None:
-        fn_visit_handler__kwargs = {}
-    nodes_pending_queue = []
-    depth = 0
-    nodes_pending_queue.insert(0, (i_node_start,depth))
-    while len(nodes_pending_queue) > 0:
-        i_node, depth = nodes_pending_queue.pop()
-        d_node = d_graph[i_node]
-
-        kwargs = {'d_graph':d_graph,'i_node':i_node,'depth':depth,'debug':debug}
-        fn_visit_handler__kwargs.update(kwargs)
-        fn_visit_handler(**fn_visit_handler__kwargs)
-        d_node['visited'] = True
-
-        for i_node_neighbor in d_node['to_nodes']:
-            d_node_neighbor = d_graph[i_node_neighbor]
-            if not d_node_neighbor['visited']:
-                nodes_pending_queue.insert(0, (i_node_neighbor,depth+1))
-
 def findShortest(graph_nodes, graph_from, graph_to, ids, val, debug=False):
     if debug:
         print(f"graph_nodes: {graph_nodes}\ngraph_from: {graph_from}\ngraph_to: {graph_to}\nids: {ids}\nval: {val}\n")
 
-    d_graph, lst_nodes_color_match = build_graph(graph_nodes, graph_from, graph_to, ids, val, debug=debug)
+    g, lst_nodes_color_match = build_graph(graph_nodes, graph_from, graph_to, ids, val, debug=debug)
 
     if len(lst_nodes_color_match) < 2:
         if debug:
@@ -132,7 +142,7 @@ def findShortest(graph_nodes, graph_from, graph_to, ids, val, debug=False):
         'target_color':val,
         'd_tracking':d_tracking
     }
-    traverse_graph_BFS(d_graph, start_node, fn_visit_handler=visit_handler__print_node, fn_visit_handler__kwargs=kwargs, debug=debug)
+    g.traverse_BFS(start_node, fn_visit_handler=visit_handler__print_node, fn_visit_handler__kwargs=kwargs)
 
     start_node = d_tracking['start_node']
     end_node = d_tracking['end_node']
