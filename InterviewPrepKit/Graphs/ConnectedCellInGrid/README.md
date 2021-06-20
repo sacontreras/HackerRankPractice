@@ -105,44 +105,47 @@ def build_graph(grid, debug=False):
     def get_node_label(r,c, mode='tuple'):
         return node_labels.index((r,c)) if mode=='index' else (r,c)
 
+    def connect_neighbors(r, c):
+        from_node = get_node_label(r,c)
+        if r-1 >= 0:
+            if grid[r-1][c] == 1:
+                to_node = get_node_label(r-1,c)
+                g.connect(from_node, to_node)
+            if c-1 >= 0:
+                if grid[r-1][c-1] == 1:
+                    to_node = get_node_label(r-1,c-1)
+                    g.connect(from_node=from_node, to_node=to_node)
+            if c+1 < n:
+                if grid[r-1][c+1] == 1:
+                    to_node = get_node_label(r-1,c+1)
+                    g.connect(from_node, to_node)
+
+        if r+1 < m:
+            if grid[r+1][c] == 1:
+                to_node = get_node_label(r+1,c)
+                g.connect(from_node, to_node)
+            if c-1 >= 0:
+                if grid[r+1][c-1] == 1:
+                    to_node = get_node_label(r+1,c-1)
+                    g.connect(from_node, to_node)
+            if c+1 < n:
+                if grid[r+1][c+1] == 1:
+                    to_node = get_node_label(r+1,c+1)
+                    g.connect(from_node, to_node)
+
+        if c-1 >= 0:
+            if grid[r][c-1] == 1:
+                to_node = get_node_label(r,c-1)
+                g.connect(from_node, to_node)
+            
+        if c+1 < n:
+            if grid[r][c+1] == 1:
+                to_node = get_node_label(r,c+1)
+                g.connect(from_node, to_node)
+
     for r in range(m):
         for c in range(n):
-            from_node = get_node_label(r,c)
-            if r-1 >= 0:
-                if grid[r-1][c] == 1:
-                    to_node = get_node_label(r-1,c)
-                    g.connect(from_node, to_node)
-                if c-1 >= 0:
-                    if grid[r-1][c-1] == 1:
-                        to_node = get_node_label(r-1,c-1)
-                        g.connect(from_node=from_node, to_node=to_node)
-                if c+1 < len(grid[r]):
-                    if grid[r-1][c+1] == 1:
-                        to_node = get_node_label(r-1,c+1)
-                        g.connect(from_node, to_node)
-
-            if r+1 < len(grid):
-                if grid[r+1][c] == 1:
-                    to_node = get_node_label(r+1,c)
-                    g.connect(from_node, to_node)
-                if c-1 >= 0:
-                    if grid[r+1][c-1] == 1:
-                        to_node = get_node_label(r+1,c-1)
-                        g.connect(from_node, to_node)
-                if c+1 < len(grid[r]):
-                    if grid[r+1][c+1] == 1:
-                        to_node = get_node_label(r+1,c+1)
-                        g.connect(from_node, to_node)
-
-            if c-1 >= 0:
-                if grid[r][c-1] == 1:
-                    to_node = get_node_label(r,c-1)
-                    g.connect(from_node, to_node)
-                
-            if c+1 < len(grid[r]):
-                if grid[r][c+1] == 1:
-                    to_node = get_node_label(r,c+1)
-                    g.connect(from_node, to_node)
+            connect_neighbors(r, c)
 
     if debug:
         print(f"\t\t--> node labels (grid coordinates): {g.node_labels}\n")
