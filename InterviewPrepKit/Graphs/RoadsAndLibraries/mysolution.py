@@ -57,9 +57,9 @@ class Graph():
             d_node = self._d_graph[current_node]
 
             if current_node not in self.visited:
-                if debug:
+                if self._debug:
                     s_tabs = "\t"*depth
-                    print(f"\t{s_tabs}visit: {current_node}, neighbors: {self._d_graph[current_node]['neighbors']}")
+                    print(f"\t{s_tabs}(depth {depth}) visit: {current_node}, neighbors: {self._d_graph[current_node]['neighbors']}")
                 kwargs = {'current_node':current_node,'depth':depth}
                 fn_visit_handler__kwargs.update(kwargs)
                 if fn_visit_handler:
@@ -70,7 +70,7 @@ class Graph():
                     if neighbor_node not in self.visited:
                         nodes_pending_queue.append((neighbor_node,depth+1))
                     else:
-                        if debug:
+                        if self._debug:
                             print(f"\t\t{s_tabs}neighbor node {neighbor_node} has already been visited")
 
 def build_graph(n, cities, debug=False):
