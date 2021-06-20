@@ -92,7 +92,7 @@ def build_graph(n, graph_from, graph_to, colors, target_color, debug=False):
 
     return g, lst_nodes_color_match
 
-def visit_handler__print_node(**kwargs):
+def visit_handler__track_shortest_path_color_match(**kwargs):
     g = kwargs['g']
     d_graph = g._d_graph
     current_node = kwargs['current_node']
@@ -149,7 +149,7 @@ def findShortest(graph_nodes, graph_from, graph_to, ids, val, debug=False):
         'target_color':val,
         'd_tracking':d_tracking
     }
-    g.traverse(start_node, fn_visit_handler=visit_handler__print_node, fn_visit_handler__kwargs=kwargs, traversal_mode='BFS')
+    g.traverse(start_node, fn_visit_handler=visit_handler__track_shortest_path_color_match, fn_visit_handler__kwargs=kwargs, traversal_mode='BFS')
 
     start_node = d_tracking['start_node']
     end_node = d_tracking['end_node']
