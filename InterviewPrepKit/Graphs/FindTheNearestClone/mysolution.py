@@ -44,7 +44,7 @@ class Graph():
     def reset_visited(self):
         self.visited = set()
 
-    def traverse_BFS(self, start_from_node, fn_visit_handler, fn_visit_handler__kwargs):
+    def traverse(self, start_from_node, fn_visit_handler, fn_visit_handler__kwargs, traversal_mode='BFS'):
         nodes_pending_queue = deque()
         depth = 0
         nodes_pending_queue.append((start_from_node,depth))
@@ -54,18 +54,25 @@ class Graph():
         fn_visit_handler__kwargs.update({'g':self})
 
         while len(nodes_pending_queue) > 0:
-            current_node, depth = nodes_pending_queue.popleft() # O(1)
+            current_node, depth = nodes_pending_queue.popleft() if traversal_mode=='BFS' else nodes_pending_queue.pop()     # O(1)
             d_node = self._d_graph[current_node]
 
             if current_node not in self.visited:
+                if debug:
+                    s_tabs = "\t"*depth
+                    print(f"\t{s_tabs}(depth {depth}) visit: {current_node}, neighbors: {self._d_graph[current_node]['neighbors']}")
                 kwargs = {'current_node':current_node,'depth':depth}
                 fn_visit_handler__kwargs.update(kwargs)
-                fn_visit_handler(**fn_visit_handler__kwargs)
+                if fn_visit_handler:
+                    fn_visit_handler(**fn_visit_handler__kwargs)
                 self.visited.add(current_node)
 
                 for neighbor_node in d_node['neighbors']:
                     if neighbor_node not in self.visited:
                         nodes_pending_queue.append((neighbor_node,depth+1))
+                    else:
+                        if debug:
+                            print(f"\t\t{s_tabs}neighbor node {neighbor_node} has already been visited")
 
 
 def build_graph(n, graph_from, graph_to, colors, target_color, debug=False):
@@ -99,29 +106,29 @@ def visit_handler__print_node(**kwargs):
 
     if debug:
         s_tabs = '\t'*depth
-        print(f"{s_tabs}depth: {depth}, visit: {current_node} --> d_graph[{current_node}]['color'] == target_color --> {c} == {target_color} --> {is_color_match}")
+        print(f"{s_tabs}\t\t--> d_graph[{current_node}]['color'] == target_color --> {c} == {target_color} --> {is_color_match}")
 
     if is_color_match:
         if d_tracking['start_node'] is None:
             d_tracking['start_node'] = (current_node, depth)
             if debug:
-                print(f"{s_tabs}\t--> start_node is None --> set start_node={d_tracking['start_node']}")
+                print(f"{s_tabs}\t\t\t--> start_node is None --> set start_node={d_tracking['start_node']}")
 
         else:   # start_node already defined
             if d_tracking['end_node'] is None:
                 d_tracking['end_node'] = (current_node, depth)
                 if debug:
-                    print(f"{s_tabs}\t--> end_node is None --> set end_node={d_tracking['end_node']}")
+                    print(f"{s_tabs}\t\t\t--> end_node is None --> set end_node={d_tracking['end_node']}")
             
             else: 
                 current_end_node = d_tracking['end_node']
                 if depth < current_end_node[1]: # end_node already defined but reassign if new depth < old depth
                     d_tracking['end_node'] = (current_node, depth)
                     if debug:
-                        print(f"{s_tabs}\t--> end_node is {current_end_node} but current depth {depth} is less --> REPLACE end_node={d_tracking['end_node']}")
+                        print(f"{s_tabs}\t\t\t--> end_node is {current_end_node} but current depth {depth} is less --> REPLACE end_node={d_tracking['end_node']}")
                 else:
                     if debug:
-                        print(f"{s_tabs}\t--> end_node is {current_end_node} but current depth {depth} is NOT less --> DO NOT REPLACE end_node")
+                        print(f"{s_tabs}\t\t\t--> end_node is {current_end_node} but current depth {depth} is NOT less --> DO NOT REPLACE end_node")
 
 def findShortest(graph_nodes, graph_from, graph_to, ids, val, debug=False):
     if debug:
@@ -142,7 +149,7 @@ def findShortest(graph_nodes, graph_from, graph_to, ids, val, debug=False):
         'target_color':val,
         'd_tracking':d_tracking
     }
-    g.traverse_BFS(start_node, fn_visit_handler=visit_handler__print_node, fn_visit_handler__kwargs=kwargs)
+    g.traverse(start_node, fn_visit_handler=visit_handler__print_node, fn_visit_handler__kwargs=kwargs, traversal_mode='BFS')
 
     start_node = d_tracking['start_node']
     end_node = d_tracking['end_node']

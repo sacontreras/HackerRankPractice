@@ -18,57 +18,83 @@ import numpy as np
 #  4. 2D_INTEGER_ARRAY cities
 #
 
+from collections import deque
+class Graph():
+    def __init__(self, n, is_directed=False, node_labels=None, debug=False):
+        self.is_directed = is_directed
+        if node_labels is None:
+            node_labels = list(range(1,n+1))
+        self.node_labels = node_labels
+        self._d_graph = {lbl_node:{'id':lbl_node,'neighbors':set()} for lbl_node in node_labels}
+        self.visited = set()
+        self._debug = debug
+        if debug:
+            self._adj_mat = [[0 for _ in range(n)] for _ in range(n)]
+
+    def connect(self, from_node, to_node):
+        self._d_graph[from_node]['neighbors'].add(to_node)
+        if not self.is_directed:
+            self._d_graph[to_node]['neighbors'].add(from_node)
+        if self._debug:
+            self._adj_mat[self.node_labels.index(from_node)][self.node_labels.index(to_node)] = 1
+            if not self.is_directed:
+                self._adj_mat[self.node_labels.index(to_node)][self.node_labels.index(from_node)] = 1
+
+    def reset_visited(self):
+        self.visited = set()
+
+    def traverse(self, start_from_node, fn_visit_handler, fn_visit_handler__kwargs, traversal_mode='BFS'):
+        nodes_pending_queue = deque()
+        depth = 0
+        nodes_pending_queue.append((start_from_node,depth))
+
+        if fn_visit_handler__kwargs is None:
+            fn_visit_handler__kwargs = {}
+        fn_visit_handler__kwargs.update({'g':self})
+
+        while len(nodes_pending_queue) > 0:
+            current_node, depth = nodes_pending_queue.popleft() if traversal_mode=='BFS' else nodes_pending_queue.pop()     # O(1)
+            d_node = self._d_graph[current_node]
+
+            if current_node not in self.visited:
+                if debug:
+                    s_tabs = "\t"*depth
+                    print(f"\t{s_tabs}visit: {current_node}, neighbors: {self._d_graph[current_node]['neighbors']}")
+                kwargs = {'current_node':current_node,'depth':depth}
+                fn_visit_handler__kwargs.update(kwargs)
+                if fn_visit_handler:
+                    fn_visit_handler(**fn_visit_handler__kwargs)
+                self.visited.add(current_node)
+
+                for neighbor_node in d_node['neighbors']:
+                    if neighbor_node not in self.visited:
+                        nodes_pending_queue.append((neighbor_node,depth+1))
+                    else:
+                        if debug:
+                            print(f"\t\t{s_tabs}neighbor node {neighbor_node} has already been visited")
+
 def build_graph(n, cities, debug=False):
-    d_cities_graph = {}
-    not_connected = set(range(1,n+1))
+    g = Graph(n, debug=debug)   # undirected by default
     if debug:
         print(f"\tbuilding graph...")
-        adj_mat = [[0 for _ in range(n)] for _ in range(n)]
     for road_city_start, road_city_end in cities:
-        i = road_city_start
-        j = road_city_end
-        
-        node_i = d_cities_graph.get(i,{'to_nodes':[],'visited':False})
-        node_i['to_nodes'].append(j)
-        d_cities_graph[i] = node_i
-        not_connected -= set([i])
-
-        node_j = d_cities_graph.get(j,{'to_nodes':[],'visited':False})
-        node_j['to_nodes'].append(i)
-        d_cities_graph[j] = node_j
-        not_connected -= set([j])
-
-        if debug:
-            adj_mat[i-1][j-1] = adj_mat[j-1][i-1] = 1
-
-    for i in list(not_connected):
-        node_i = d_cities_graph.get(i,{'to_nodes':[],'visited':False})
-        d_cities_graph[i] = node_i
-
+        g.connect(road_city_start, road_city_end)   # undirected by default
     if debug:
-        print(f"\t\t--> graph:\n{d_cities_graph}\n")
-        print(f"\t\t--> adjacency matrix:\n{np.matrix(adj_mat)}")
-        if len(not_connected)>0:
-            print(f"\t\t--> disconnected nodes: {not_connected}")
+        print(f"\t\t--> graph:\n{g._d_graph}\n")
+        print(f"\t\t--> adjacency matrix:\n{np.matrix(g._adj_mat)}")
         print()
 
-    return d_cities_graph
+    return g
 
-def traverse_graph_dfs(d_graph, i_node_start, debug=False):
-    if debug:
-        print(f"\t\tvisit: {i_node_start}, to_nodes: {d_graph[i_node_start]['to_nodes']}")
-    path = [i_node_start]
-    d_graph[i_node_start]['visited'] = True
-
-    for to_node_i in d_graph[i_node_start]['to_nodes']:
-        d_to_node = d_graph[to_node_i]
-        if not d_to_node['visited']:
-            _path = traverse_graph_dfs(d_graph, to_node_i, debug=debug)
-            path.extend(_path)
-        if debug:
-            print(f"\t\t\t{to_node_i} has already been visited")
-
-    return path
+def node_visit_handler__append_path(**kwargs):
+    g = kwargs['g']
+    d_graph = g._d_graph
+    current_node = kwargs['current_node']
+    d_node = d_graph[current_node]
+    depth = kwargs['depth']
+    path = kwargs['path']
+    debug = g._debug
+    path.append(current_node)
 
 def roadsAndLibraries(n, c_lib, c_road, cities, debug=False):
     if debug:
@@ -87,17 +113,19 @@ def roadsAndLibraries(n, c_lib, c_road, cities, debug=False):
     if debug:
         print(f"c_road < c_lib --> must build graph and traverse DFS")
 
-    d_cities_graph = build_graph(n, cities, debug=debug)
+    g = build_graph(n, cities, debug=debug)
 
     counties = []
     if debug:
         print(f"\ttraversing graph DFS (building city-paths for each 'county')...")
-    for i_node_start, node_start in d_cities_graph.items():
-        if not node_start['visited']:
-            counties.append(traverse_graph_dfs(d_cities_graph, i_node_start, debug=debug))
+    for i_node_start, node_start in g._d_graph.items():
+        if i_node_start not in g.visited:
+            path=[]
+            g.traverse(i_node_start, fn_visit_handler=node_visit_handler__append_path, fn_visit_handler__kwargs={'path':path}, traversal_mode='DFS')
+            counties.append(path)
         else:
             if debug:
-                print(f"\t\t{i_node_start} has already been visited")
+                print(f"\t(start) node {i_node_start} has already been visited")
     if debug:
         print(f"\t\t--> counties: {counties}\n")
 
