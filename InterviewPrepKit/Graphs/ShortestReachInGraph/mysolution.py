@@ -6,62 +6,94 @@ import random
 import re
 import sys
 import numpy as np
+
+
 from collections import deque
-
-
 class Graph():
-    def __init__(self, n, edge_weight=6, print_distances=True, debug=False):
-        self._d_graph = {lbl_node:{'id':lbl_node,'neighbors':set(),'visited':False} for lbl_node in range(n)}
-        self.edge_weight = edge_weight
-        self.distances = [-1] * len(self._d_graph)
-        self.print_distances = print_distances
+    def __init__(self, n, is_directed=False, node_labels=None, debug=False):
+        self.is_directed = is_directed
+        if node_labels is None:
+            node_labels = list(range(1,n+1))
+        self.node_labels = node_labels
+        self._d_graph = {lbl_node:{'id':lbl_node,'neighbors':set()} for lbl_node in node_labels}
+        self.visited = set()
         self._debug = debug
         if debug:
             self._adj_mat = [[0 for _ in range(n)] for _ in range(n)]
 
-    def connect(self, from_node, to_node):  # these are zero-based
+    def connect(self, from_node, to_node):
         self._d_graph[from_node]['neighbors'].add(to_node)
-        self._d_graph[to_node]['neighbors'].add(from_node)
+        if not self.is_directed:
+            self._d_graph[to_node]['neighbors'].add(from_node)
         if self._debug:
-            self._adj_mat[from_node][to_node] = self._adj_mat[to_node][from_node] = 1
+            self._adj_mat[self.node_labels.index(from_node)][self.node_labels.index(to_node)] = 1
+            if not self.is_directed:
+                self._adj_mat[self.node_labels.index(to_node)][self.node_labels.index(from_node)] = 1
 
-    def __traverse_graph_BFS(self, from_node):
+    def reset_visited(self):
+        self.visited = set()
+
+    def traverse(self, start_from_node, fn_visit_handler, fn_visit_handler__kwargs, traversal_mode='BFS'):
         nodes_pending_queue = deque()
         depth = 0
-        nodes_pending_queue.append((from_node,depth))
+        nodes_pending_queue.append((start_from_node,depth))
+
+        if fn_visit_handler__kwargs is None:
+            fn_visit_handler__kwargs = {}
+        fn_visit_handler__kwargs.update({'g':self})
 
         while len(nodes_pending_queue) > 0:
-            current_node, depth = nodes_pending_queue.popleft()
+            current_node, depth = nodes_pending_queue.popleft() if traversal_mode=='BFS' else nodes_pending_queue.pop()     # O(1)
             d_node = self._d_graph[current_node]
 
-            if not d_node['visited']:
-                distance = depth * self.edge_weight
+            if current_node not in self.visited:
                 if self._debug:
-                    s_tabs = '\t'*depth
-                    print(f"{s_tabs}depth: {depth}, visit: {current_node} --> distance from node {from_node} is: {distance}")
-                self.distances[d_node['id']] = distance
-                d_node['visited'] = True
+                    s_tabs = "\t"*depth
+                    print(f"\t{s_tabs}(depth {depth}) visit: {current_node}, neighbors: {self._d_graph[current_node]['neighbors']}")
+                kwargs = {'current_node':current_node,'depth':depth}
+                fn_visit_handler__kwargs.update(kwargs)
+                if fn_visit_handler:
+                    fn_visit_handler(**fn_visit_handler__kwargs)
+                self.visited.add(current_node)
 
                 for neighbor_node in d_node['neighbors']:
-                    d_node_neighbor = self._d_graph[neighbor_node]
-                    if not d_node_neighbor['visited']:
+                    if neighbor_node not in self.visited:
                         nodes_pending_queue.append((neighbor_node,depth+1))
+                    else:
+                        if self._debug:
+                            print(f"\t\t{s_tabs}neighbor node {neighbor_node} has already been visited")
 
-        del self.distances[from_node]
 
+def node_visit_handler__append_path(**kwargs):
+    g = kwargs['g']
+    d_graph = g._d_graph
+    current_node = kwargs['current_node']
+    d_node = d_graph[current_node]
+    depth = kwargs['depth']
+    
+    distance = depth * g.edge_weight
+    if g._debug:
+        s_tabs = '\t'*depth
+        print(f"{s_tabs}\t\t--> distance from start node is: depth * edge_weight = {depth} * {g.edge_weight} = {distance}")
+    g.distances[d_node['id']] = distance
 
-    def find_all_distances(self, from_node):   # BFS
-        self.__traverse_graph_BFS(from_node)
-        if self.print_distances:
-            s_result = ' '.join([str(d) for d in self.distances])
-            print(s_result)
+def find_all_distances(g, start_from_node):   # BFS
+    g.traverse(start_from_node, fn_visit_handler=node_visit_handler__append_path, fn_visit_handler__kwargs=None, traversal_mode='BFS')
+    del g.distances[start_from_node]
+    if g.print_distances:
+        s_result = ' '.join([str(d) for d in g.distances])
+        print(s_result)
+    else:
+        if g._debug:
+            print(f"\nfind_all_distances (from start node {start_from_node}) result: {g.distances}\n")
     
 
 if __name__ == '__main__':
-    debug = False
+    debug = True
     output_to_file = False and debug
 
-    s_f_indices = ['00','07','08', '01', '05']
+    # s_f_indices = ['00','07','08', '01', '05']
+    s_f_indices = ['00','07','08']
 
     for s_f_index in s_f_indices:
         base_path = './InterviewPrepKit/Graphs/ShortestReachInGraph/'
@@ -86,7 +118,13 @@ if __name__ == '__main__':
         t = int(input())
         for i in range(t):
             n,m = [int(value) for value in input().split()]
-            graph = Graph(n, print_distances=False, debug=debug)
+            graph = Graph(n, node_labels = list(range(n)), debug=debug)
+
+            graph.edge_weight = 6
+            graph.distances = [-1] * len(graph._d_graph)
+            graph.print_distances = not debug
+            graph.find_all_distances = find_all_distances
+
             for i in range(m):
                 x,y = [int(x) for x in input().split()]
                 graph.connect(x-1,y-1) 
@@ -94,7 +132,7 @@ if __name__ == '__main__':
                 print(f"\t\t--> graph:\n{graph._d_graph}\n")
                 print(f"\t\t--> adjacency matrix:\n{np.matrix(graph._adj_mat)}\n")
             s = int(input())
-            graph.find_all_distances(s-1)
+            graph.find_all_distances(graph, s-1)
             results.append(graph.distances)
 
 
