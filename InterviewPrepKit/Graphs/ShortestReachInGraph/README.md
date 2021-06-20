@@ -442,7 +442,7 @@ class Graph():
                             print(f"\t\t{s_tabs}neighbor node {neighbor_node} has already been visited")
 
 
-def node_visit_handler__append_path(**kwargs):
+def node_visit_handler__compute_distance(**kwargs):
     g = kwargs['g']
     d_graph = g._d_graph
     current_node = kwargs['current_node']
@@ -456,7 +456,7 @@ def node_visit_handler__append_path(**kwargs):
     g.distances[d_node['id']] = distance
 
 def find_all_distances(g, start_from_node):   # BFS
-    g.traverse(start_from_node, fn_visit_handler=node_visit_handler__append_path, fn_visit_handler__kwargs=None, traversal_mode='BFS')
+    g.traverse(start_from_node, fn_visit_handler=node_visit_handler__compute_distance, fn_visit_handler__kwargs=None, traversal_mode='BFS')
     del g.distances[start_from_node]
     if g.print_distances:
         s_result = ' '.join([str(d) for d in g.distances])
